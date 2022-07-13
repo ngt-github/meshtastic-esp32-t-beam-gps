@@ -103,6 +103,7 @@ static uint16_t displayWidth, displayHeight;
 #define FONT_SMALL ArialMT_Plain_10
 #define FONT_MEDIUM ArialMT_Plain_16
 #define FONT_LARGE ArialMT_Plain_24
+#define FONT_MAX_SIZE Dialog_Plain_30
 #endif
 
 #define fontHeight(font) ((font)[1] + 1) // height is position 1
@@ -794,6 +795,27 @@ static void drawNodeInfo(OLEDDisplay *display, OLEDDisplayUiState *state, int16_
     drawColumns(display, x, y, fields);
 }
 
+static void drawStaticTestFrame(OLEDDisplay *display, OLEDDisplayUiState *state, int16_t x, int16_t y)
+{
+    displayedNodeNum = 0; // Not currently showing a node pane
+
+    //const char* gpsKoordinate = "48.1244534    9.0125346";
+    //this has to be calculated from a gps-coordinate
+    const char* sSFKoordinate = "H22 4/4";
+    
+    display->setTextAlignment(TEXT_ALIGN_LEFT);
+    display->setFont(FONT_MEDIUM);
+    display->drawString(0 + x, 0 + y, "POS gesendet!");
+
+    display->setFont(FONT_MAX_SIZE);    
+    display->drawString(x + getStringCenteredX(sSFKoordinate), y + 18, sSFKoordinate);
+
+    //TODO: Debug only.  Text above needs to be FONT_LARGE when using these lines
+    //display->setFont(FONT_SMALL);
+    //display->drawString(x+getStringCenteredX(gpsKoordinate), y + 45, gpsKoordinate);
+
+}
+
 #if 0
 void _screen_header()
 {
@@ -1179,6 +1201,9 @@ void Screen::setFrames()
 
     // call a method on debugInfoScreen object (for more details)
     normalFrames[numframes++] = &Screen::drawDebugInfoSettingsTrampoline;
+    
+    // call a method on debugInfoScreen object (for more details)
+    normalFrames[numframes++] = drawStaticTestFrame;
 
 #ifndef NO_ESP32
     if (isWifiAvailable()) {
